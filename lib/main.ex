@@ -7,14 +7,10 @@ defmodule Broker do
 
   def listen() do
     # You can use print statements as follows for debugging, they'll be visible when running tests.
-    IO.puts(:stderr,"Logs from your program will appear here!")
+    IO.puts(:stderr, "Logs from your program will appear here!")
 
-    # TODO: Uncomment the code below to pass the first stage
-    #
-    # # Since the tester restarts your program quite often, setting SO_REUSEADDR
-    # # ensures that we don't run into 'Address already in use' errors
-    # {:ok, socket} = :gen_tcp.listen(9092, [:binary, active: false, reuseaddr: true])
-    # {:ok, _client} = :gen_tcp.accept(socket)
+    {:ok, socket} = :gen_tcp.listen(9092, [:binary, active: false, reuseaddr: true])
+    {:ok, _client} = :gen_tcp.accept(socket)
   end
 end
 
@@ -27,4 +23,3 @@ defmodule CLI do
     Process.sleep(:infinity)
   end
 end
-
