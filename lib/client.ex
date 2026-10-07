@@ -5,9 +5,6 @@ defmodule Client do
 
   @doc "fires the whole tcp request response loop"
   def listen() do
-    # You can use print statements as follows for debugging, they'll be visible when running tests.
-    IO.puts(:stderr, "Logs from your program will appear here!")
-
     {:ok, socket} = :gen_tcp.listen(9092, [:binary, active: false, reuseaddr: true])
     listen_loop(socket)
   end
