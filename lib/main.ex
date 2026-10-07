@@ -15,7 +15,9 @@ defmodule Broker do
 
   defp listen_loop(socket) do
     case :gen_tcp.accept(socket) do
-      {:ok, client} -> client_loop(client)
+      {:ok, client} ->
+        {:ok, pid} = Task.start_link(fn -> client_loop(client) end)
+        :ok = :gen_tcp.controlling_process(client, pid)
     end
 
     listen_loop(socket)
