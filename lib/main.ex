@@ -23,7 +23,7 @@ defmodule Broker do
 
   defp client_loop(client) do
     case :gen_tcp.recv(client, 0) do
-      {:ok, data} -> :gen_tcp.send(client, data)
+      {:ok, data} -> :gen_tcp.send(client, 0)
     end
 
     client_loop(client)
