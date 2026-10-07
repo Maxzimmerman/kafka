@@ -1,4 +1,4 @@
-defmodule Protocol do
+defmodule WireProtocol do
 @moduledoc """
 Module that handles all transforms and operations and provides structure for a kafka wire protocol request/response shape
 """
