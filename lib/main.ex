@@ -10,7 +10,23 @@ defmodule Broker do
     IO.puts(:stderr, "Logs from your program will appear here!")
 
     {:ok, socket} = :gen_tcp.listen(9092, [:binary, active: false, reuseaddr: true])
-    {:ok, _client} = :gen_tcp.accept(socket)
+    listen_loop(socket)
+  end
+
+  defp listen_loop(socket) do
+    case :gen_tcp.accept(socket) do
+      {:ok, client} -> client_loop(client)
+    end
+
+    listen_loop(socket)
+  end
+
+  defp client_loop(client) do
+    case :gen_tcp.recv(client, 0) do
+      {:ok, data} -> :gen_tcp.send(client, data)
+    end
+
+    client_loop(client)
   end
 end
 
