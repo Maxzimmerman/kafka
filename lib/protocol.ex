@@ -6,7 +6,8 @@ defmodule WireProtocol do
   @doc "takes the data and returns a response in kafka format based on the data."
   @spec response(binary() | nil) :: binary() | nil
   def response(data) do
-    <<_size::32, _api_key::16, _api_version::16, correlation_id::32, _rest::binary>> = data
+    <<_size::32, _api_key::16, api_version::16, correlation_id::32, _rest::binary>> = data
+    IO.inspect(api_version, label: "API VERSION")
 
     # 2. Construct the Response Header (just the Correlation ID for this stage)
     response_header = <<correlation_id::32>>
