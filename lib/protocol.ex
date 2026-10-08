@@ -11,6 +11,7 @@ defmodule WireProtocol do
 
     # 2. Construct the Response Header (just the Correlation ID for this stage)
     response_header = <<correlation_id::32>>
+    IO.inspect(<<api_version::16>>)
 
     # 3. Calculate total response size (4 bytes for correlation_id)
     # Note: Later stages will append a response body here, increasing this size!
