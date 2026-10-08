@@ -8,6 +8,7 @@ defmodule WireProtocol do
   def response(data) do
     <<_size::32, _api_key::16, api_version::16, correlation_id::32, _rest::binary>> = data
     IO.inspect(api_version, label: "API VERSION")
+    IO.inspect(correlation_id, label: "CORRELATION ID")
 
     # 2. Construct the Response Header (just the Correlation ID for this stage)
     response_header = <<api_version::16, correlation_id::32>>
