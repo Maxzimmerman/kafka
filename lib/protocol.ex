@@ -12,9 +12,10 @@ defmodule WireProtocol do
     <<_size::32, _api_key::16, api_version::16, correlation_id::32, _rest::binary>> = data
     IO.inspect(api_version, label: "API VERSION")
     IO.inspect(error_code_field(api_version))
+    IO.inspect(<<error_code_field(api_version)::16>>)
 
     # 2. Construct the Response Header (just the Correlation ID for this stage)
-    response_header = <<error_code_field(api_version)::16, correlation_id::32>>
+    response_header = <<correlation_id::32, error_code_field(api_version)>>
 
     # 3. Calculate total response size (4 bytes for correlation_id)
     # Note: Later stages will append a response body here, increasing this size!
