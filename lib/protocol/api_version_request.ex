@@ -3,6 +3,12 @@ defmodule Kafka.Protocol.ApiVersionsRequest do
   Represents a Kafka ApiVersions Request (typically API Key 18).
   """
 
+  @type t :: %__MODULE__{
+          size: String.t(),
+          header: Header.t(),
+          body: Body.t()
+        }
+
   # The main request wraps the header and the body
   defstruct [
     :size,
@@ -11,6 +17,10 @@ defmodule Kafka.Protocol.ApiVersionsRequest do
   ]
 
   defmodule Header do
+    @type t :: %__MODULE__{
+            correlation_id: integer()
+          }
+
     @moduledoc """
     Kafka Request Header (typically Version 2+ for flexible versions).
     """
