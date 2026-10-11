@@ -27,7 +27,7 @@ defmodule Kafka.Protocol.ApiVersionsResponse do
   defmodule Body do
     @type t :: %__MODULE__{
             error_code: integer(),
-            api_keys: list(ApiKeySupport.t()),
+            api_keys: list(__MODULE__.ApiKeySupport.t()),
             throttle_time: integer(),
             tag_buffer: integer()
           }
