@@ -4,8 +4,8 @@ defmodule Kafka.Protocol.ApiVersionsResponse do
   """
 
   @type t :: %__MODULE__{
-          header: %__MODULE__.Header.t(),
-          body: %__MODULE__.Body.t()
+          header: __MODULE__.Header.t(),
+          body: __MODULE__.Body.t()
         }
 
   defstruct [
