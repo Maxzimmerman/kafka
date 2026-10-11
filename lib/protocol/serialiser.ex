@@ -21,7 +21,7 @@ defmodule Kafka.Protocol.Serialiser do
       }) do
     with {:ok, response_header} <- response_header(correlation_id, api_version),
          {:ok, response_size} <- response_size(response_header) do
-      <<response_size::32, response_header::binary>>
+      {:ok, <<response_size::32, response_header::binary>>}
     end
   end
 
