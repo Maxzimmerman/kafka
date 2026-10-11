@@ -5,8 +5,8 @@ defmodule Kafka.Protocol.ApiVersionsRequest do
 
   @type t :: %__MODULE__{
           size: String.t(),
-          header: Header.t(),
-          body: Body.t()
+          header: ApiVersionsRequest.Header.t(),
+          body: ApiVersionsRequest.Body.t()
         }
 
   # The main request wraps the header and the body
@@ -18,7 +18,11 @@ defmodule Kafka.Protocol.ApiVersionsRequest do
 
   defmodule Header do
     @type t :: %__MODULE__{
-            correlation_id: integer()
+            api_key: integer(),
+            api_version: integer(),
+            correlation_id: integer(),
+            client_id: String.t(),
+            tag_buffer: integer()
           }
 
     @moduledoc """
@@ -39,6 +43,12 @@ defmodule Kafka.Protocol.ApiVersionsRequest do
   end
 
   defmodule Body do
+    @type t :: %__MODULE__{
+            client_software_name: String.t(),
+            client_software_version: String.t(),
+            tag_buffer: integer()
+          }
+
     @moduledoc """
     The specific body fields for an ApiVersions Request.
     """
