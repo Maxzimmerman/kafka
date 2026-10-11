@@ -2,7 +2,7 @@ defmodule Broker do
   use Application
 
   def start(_type, _args) do
-    Supervisor.start_link([{Task, fn -> Client.listen() end}], strategy: :one_for_one)
+    Supervisor.start_link([{Task, fn -> Client.listen(9092) end}], strategy: :one_for_one)
   end
 end
 

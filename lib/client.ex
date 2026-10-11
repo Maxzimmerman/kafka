@@ -6,8 +6,8 @@ defmodule Client do
   alias Kafka.Protocol
 
   @doc "fires the whole tcp request response loop"
-  def listen() do
-    {:ok, socket} = :gen_tcp.listen(9092, [:binary, active: false, reuseaddr: true])
+  def listen(port) do
+    {:ok, socket} = :gen_tcp.listen(port, [:binary, active: false, reuseaddr: true])
     listen_loop(socket)
   end
 
