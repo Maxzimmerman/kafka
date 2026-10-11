@@ -3,6 +3,7 @@ defmodule Client do
   module that completely handles the tcp request response and client handlind
   """
 
+  alias Kafka.Protocol
   @doc "fires the whole tcp request response loop"
   def listen() do
     {:ok, socket} = :gen_tcp.listen(9092, [:binary, active: false, reuseaddr: true])
@@ -21,7 +22,7 @@ defmodule Client do
 
   defp client_loop(client) do
     case :gen_tcp.recv(client, 0) do
-      {:ok, data} -> :gen_tcp.send(client, WireProtocol.response(data))
+      {:ok, data} -> :gen_tcp.send(client, Protocol.response(data))
     end
 
     client_loop(client)
