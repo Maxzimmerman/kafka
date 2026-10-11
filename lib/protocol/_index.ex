@@ -50,17 +50,11 @@ defmodule Kafka.Protocol do
        }
 
   # ------------------------------------ RESPONSE ------------------------------------
-  defp response_header(correlation_id, api_version)
-       when is_binary(correlation_id) and is_binary(api_version) do
+  defp response_header(correlation_id, api_version) do
     {:ok, <<correlation_id::32, error_code_field(api_version)::16>>}
   end
 
-  defp response_header(_, _), do: :error
-
-  defp response_size(response_header) when is_binary(response_header),
-    do: {:ok, byte_size(response_header)}
-
-  defp resposne_size(_), do: :error
+  defp response_size(response_header), do: {:ok, byte_size(response_header)}
 
   defp validate_api_version(version), do: version in @valid_versions
 
