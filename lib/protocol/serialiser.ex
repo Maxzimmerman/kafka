@@ -10,7 +10,7 @@ defmodule Kafka.Protocol.Serialiser do
   # ------------------------------------ INTERFACE ------------------------------------
 
   @doc "Receives request as struct converts to response bytes"
-  @spec request_struct_to_response_bytes(ApiVersionsRequest.Header.t() | nil) :: {:ok, binary()} | nil
+  @spec request_struct_to_response_bytes(ApiVersionsRequest.t() | nil) :: {:ok, binary()} | nil
   def request_struct_to_response_bytes(%ApiVersionsRequest{
         header: %ApiVersionsRequest.Header{
           correlation_id: correlation_id,
