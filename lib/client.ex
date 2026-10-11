@@ -23,7 +23,10 @@ defmodule Client do
 
   defp client_loop(client) do
     case :gen_tcp.recv(client, 0) do
-      {:ok, data} -> :gen_tcp.send(client, Protocol.response(data))
+      {:ok, data} ->
+        request_struct = Protocol.request(data)
+        response = Protocol.response(request_struct)
+        :gen_tcp.send(client, response)
     end
 
     client_loop(client)
