@@ -6,7 +6,7 @@ defmodule Kafka.Protocol do
   def response(data) do
     with %ApiVersionsRequest{} = request_struct <- Serialiser.request_bytes_to_struct(data),
          {:ok, response_bytes} <- Serialiser.request_struct_to_response_bytes(request_struct) do
-      {:ok, response_bytes}
+      response_bytes
     end
   end
 end
