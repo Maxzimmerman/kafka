@@ -1,4 +1,7 @@
 defmodule Kafka.Protocol do
+  @moduledoc """
+  Protocol Orchestrator
+  """
   alias Kafka.Protocol.Serialiser
   alias Kafka.Protocol.ApiVersionsRequest
 
