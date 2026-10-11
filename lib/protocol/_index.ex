@@ -11,18 +11,16 @@ defmodule Kafka.Protocol do
 
   # ------------------------------------ INTERFACE ------------------------------------
 
-  @doc "Receives the data as bytes converts to Request struct and build response bytes"
+  @doc "Receives request as struct converts to response bytes"
   @spec response(binary() | nil) :: binary() | nil
-  def response(data) do
-    with %ApiVersionsRequest{
-           header: %ApiVersionsRequest.Header{
-             correlation_id: correlation_id,
-             api_version: api_version
-           },
-           body: %ApiVersionsRequest.Body{}
-         } <-
-           request_to_struct(data),
-         {:ok, response_header} <- response_header(correlation_id, api_version),
+  def response(%ApiVersionsRequest{
+        header: %ApiVersionsRequest.Header{
+          correlation_id: correlation_id,
+          api_version: api_version
+        },
+        body: %ApiVersionsRequest.Body{}
+      }) do
+    with {:ok, response_header} <- response_header(correlation_id, api_version),
          {:ok, response_size} <- response_size(response_header) do
       # 2. Construct the Response Header (just the Correlation ID for this stage)
 
@@ -31,6 +29,17 @@ defmodule Kafka.Protocol do
 
       # 4. Assemble the final packet and send it back
       <<response_size::32, response_header::binary>>
+    end
+  end
+
+  @doc "Receives request bytes and converts to request struct"
+  def request(<<data::binary>>) do
+    with %ApiVersionsRequest{
+           header: %ApiVersionsRequest.Header{},
+           body: %ApiVersionsRequest.Body{} = request_struct
+         } <-
+           request_to_struct(data) do
+      request_struct
     end
   end
 
