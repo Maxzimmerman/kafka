@@ -3,6 +3,8 @@ defmodule WireProtocol do
   Module that handles all transforms and operations and provides structure for a kafka wire protocol request/response shape
   """
 
+  alias WireProtocol.Request
+
   @valid_versions [4]
   @error_codes %{UNSUPPORTED_VERSION: 35}
 
@@ -24,7 +26,7 @@ defmodule WireProtocol do
   end
 
   def request(<<size::32, api_key::16, api_version::16, correlation_id::32, rest::binary>>),
-    do: %{
+    do: %Request{
       size: size,
       api_key: api_key,
       api_version: api_version,
