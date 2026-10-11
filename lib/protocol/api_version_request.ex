@@ -21,7 +21,7 @@ defmodule Kafka.Protocol.ApiVersionsRequest do
             api_key: integer(),
             api_version: integer(),
             correlation_id: integer(),
-            client_id: String.t(),
+            client_id: String.t() | nil,
             tag_buffer: integer()
           }
 
