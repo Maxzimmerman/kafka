@@ -1,32 +1,42 @@
-defmodule Kafka.Protocol.ApiVersionsRequest do
+defmodule Kafka.Protocol.ApiVersionsResponse do
   @moduledoc """
-  Represents a Kafka ApiVersions Request (typically API Key 18).
+  Represents a Kafka ApiVersions Response.
   """
-
-  # The main request wraps the header and the body
   defstruct [
-    :size,
     :header,
     :body
   ]
 
   defmodule Header do
-    @moduledoc """
-    Kafka Request Header (typically Version 2+ for flexible versions).
-    """
     defstruct [
-      :correlation_id,      # 4-byte integer
+      # 4-byte big-endian integer echoed from request
+      :correlation_id
     ]
   end
 
   defmodule Body do
-    @moduledoc """
-    The specific body fields for an ApiVersions Request.
-    """
     defstruct [
-      :client_software_name,     # Compact string (e.g., "kafka-cli")
-      :client_software_version,  # Compact string (e.g., "0.1")
-      tag_buffer: 0x00           # 1-byte component for flexible fields
+      # 2-byte integer (0 means success)
+      :error_code,
+      # List of %ApiKeySupport{} structs
+      :api_keys,
+      # 4-byte integer (duration in ms client should slow down)
+      :throttle_time,
+      # 1-byte component for flexible fields
+      tag_buffer: 0x00
+    ]
+  end
+
+  defmodule ApiKeySupport do
+    defstruct [
+      # 2-byte integer identifying the API (e.g., Produce, Fetch)
+      :api_key,
+      # 2-byte integer
+      :min_version,
+      # 2-byte integer
+      :max_version,
+      # 1-byte component for flexible fields
+      tag_buffer: 0x00
     ]
   end
 end
