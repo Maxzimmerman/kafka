@@ -5,8 +5,8 @@ defmodule Kafka.Protocol.ApiVersionsRequest do
 
   @type t :: %__MODULE__{
           size: non_neg_integer(),
-          header: ApiVersionsRequest.Header.t(),
-          body: ApiVersionsRequest.Body.t()
+          header: __MODULE__.Header.t(),
+          body: __MODULE__.Body.t()
         }
 
   # The main request wraps the header and the body
