@@ -44,8 +44,8 @@ defmodule Kafka.Protocol.ApiVersionsRequest do
 
   defmodule Body do
     @type t :: %__MODULE__{
-            client_software_name: String.t(),
-            client_software_version: String.t(),
+            client_software_name: String.t() | nil,
+            client_software_version: String.t() | nil,
             tag_buffer: integer()
           }
 
