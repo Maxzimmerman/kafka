@@ -25,7 +25,7 @@ defmodule Kafka.Protocol.Serialiser do
   end
 
   @doc "Receives request bytes and converts to request struct"
-  @spec request_bytes_to_struct(binary() | nil) :: %ApiVersionsRequest.t() | nil
+  @spec request_bytes_to_struct(binary() | nil) :: %ApiVersionsRequest.t()
   def request_bytes_to_struct(<<data::binary>>) do
     with %ApiVersionsRequest{
            header: %ApiVersionsRequest.Header{},
