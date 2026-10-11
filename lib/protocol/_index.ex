@@ -36,8 +36,8 @@ defmodule Kafka.Protocol do
   def request(<<data::binary>>) do
     with %ApiVersionsRequest{
            header: %ApiVersionsRequest.Header{},
-           body: %ApiVersionsRequest.Body{} = request_struct
-         } <-
+           body: %ApiVersionsRequest.Body{}
+         } = request_struct <-
            request_to_struct(data) do
       request_struct
     end
