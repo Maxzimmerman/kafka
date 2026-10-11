@@ -10,12 +10,8 @@ defmodule WireProtocol do
   @spec response(binary() | nil) :: binary() | nil
   def response(data) do
     <<_size::32, _api_key::16, api_version::16, correlation_id::32, _rest::binary>> = data
-    IO.inspect(api_version, label: "API VERSION")
-    IO.inspect(error_code_field(api_version))
-    IO.inspect(<<error_code_field(api_version)::16>>)
-
     # 2. Construct the Response Header (just the Correlation ID for this stage)
-    response_header = <<correlation_id::32, error_code_field(api_version)::16>>
+    response_header = response_header(correlation_id, api_version)
 
     # 3. Calculate total response size (4 bytes for correlation_id)
     # Note: Later stages will append a response body here, increasing this size!
@@ -23,6 +19,10 @@ defmodule WireProtocol do
 
     # 4. Assemble the final packet and send it back
     <<response_size::32, response_header::binary>>
+  end
+
+  defp response_header(correlation_id, api_version) do
+    <<correlation_id::32, error_code_field(api_version)::16>>
   end
 
   defp validate_api_version(version), do: version in @valid_versions
