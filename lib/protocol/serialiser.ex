@@ -6,7 +6,6 @@ defmodule Kafka.Protocol.Serialiser do
   alias Kafka.Protocol.ApiVersionsRequest
 
   @valid_versions [4]
-  @error_codes %{UNSUPPORTED_VERSION: 35}
 
   # ------------------------------------ INTERFACE ------------------------------------
 
