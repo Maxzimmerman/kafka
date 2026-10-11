@@ -4,7 +4,7 @@ defmodule Kafka.Protocol.ApiVersionsRequest do
   """
 
   @type t :: %__MODULE__{
-          size: String.t(),
+          size: non_neg_integer(),
           header: ApiVersionsRequest.Header.t(),
           body: ApiVersionsRequest.Body.t()
         }
