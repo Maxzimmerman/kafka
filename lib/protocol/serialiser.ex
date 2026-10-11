@@ -36,7 +36,7 @@ defmodule Kafka.Protocol.Serialiser do
     end
   end
 
-  # ------------------------------------ REQUEST ------------------------------------
+  # ------------------------------------ REQUEST HELPERS ------------------------------------
 
   defp request_to_struct(
          <<size::32, api_key::16, api_version::16, correlation_id::32, _rest::binary>>
@@ -51,7 +51,7 @@ defmodule Kafka.Protocol.Serialiser do
          body: %ApiVersionsRequest.Body{}
        }
 
-  # ------------------------------------ RESPONSE ------------------------------------
+  # ------------------------------------ RESPONSE HELPERS ------------------------------------
 
   defp response_header(correlation_id, api_version) do
     {:ok, <<correlation_id::32, error_code_field(api_version)::16>>}
