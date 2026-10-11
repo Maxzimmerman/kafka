@@ -11,7 +11,6 @@ defmodule WireProtocol do
   def response(data) do
     with %{size: size, api_version: api_version, correlation_id: correlation_id, rest: rest} <-
            request(data) do
-      <<_size::32, _api_key::16, api_version::16, correlation_id::32, _rest::binary>> = data
       # 2. Construct the Response Header (just the Correlation ID for this stage)
       response_header = response_header(correlation_id, api_version)
 
