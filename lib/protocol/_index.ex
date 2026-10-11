@@ -59,6 +59,7 @@ defmodule Kafka.Protocol do
        }
 
   # ------------------------------------ RESPONSE ------------------------------------
+
   defp response_header(correlation_id, api_version) do
     {:ok, <<correlation_id::32, error_code_field(api_version)::16>>}
   end
