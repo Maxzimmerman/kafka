@@ -2,12 +2,22 @@ defmodule Kafka.Protocol.ApiVersionsResponse do
   @moduledoc """
   Represents a Kafka ApiVersions Response.
   """
+
+  @type t :: %__MODULE__{
+          header: Header.t(),
+          body: Body.t()
+        }
+
   defstruct [
     :header,
     :body
   ]
 
   defmodule Header do
+    @type t :: %__MODULE__{
+            correlation_id: integer()
+          }
+
     defstruct [
       # 4-byte big-endian integer echoed from request
       :correlation_id
@@ -15,6 +25,13 @@ defmodule Kafka.Protocol.ApiVersionsResponse do
   end
 
   defmodule Body do
+    @type t :: %__MODULE__{
+            error_code: integer(),
+            api_keys: list(ApiKeySupport.t()),
+            throttle_time: integer(),
+            tag_buffer: integer()
+          }
+
     defstruct [
       # 2-byte integer (0 means success)
       :error_code,
@@ -28,6 +45,13 @@ defmodule Kafka.Protocol.ApiVersionsResponse do
   end
 
   defmodule ApiKeySupport do
+    @type t :: %__MODULE__{
+            api_key: integer(),
+            min_version: integer(),
+            max_version: integer(),
+            tag_buffer: integer()
+          }
+
     defstruct [
       # 2-byte integer identifying the API (e.g., Produce, Fetch)
       :api_key,

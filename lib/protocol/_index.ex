@@ -12,7 +12,7 @@ defmodule Kafka.Protocol do
   # ------------------------------------ INTERFACE ------------------------------------
 
   @doc "Receives request as struct converts to response bytes"
-  @spec response(binary() | nil) :: binary() | nil
+  @spec response(ApiVersionsRequest.Header.t() | nil) :: binary() | nil
   def response(%ApiVersionsRequest{
         header: %ApiVersionsRequest.Header{
           correlation_id: correlation_id,
