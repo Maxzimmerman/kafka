@@ -40,7 +40,9 @@ defmodule Kafka.Protocol.Serialiser do
   defp request_to_struct(
          <<size::32, api_key::16, api_version::16, correlation_id::32, rest::binary>>
        ) do
+    IO.inspect(rest)
     {client_id, rest} = extract_bytes_with_length(2, rest)
+    IO.inspect(rest)
     {client_software_name, rest} = extract_bytes_with_length(1, rest)
     {client_software_version, rest} = extract_bytes_with_length(1, rest)
     IO.inspect(client_software_name)
