@@ -68,7 +68,7 @@ defmodule Kafka.Protocol.Serialiser do
 
   # header 
 
-  defp extract_string(2, <<length::32, content::binary-size(length), rest::binary>>),
+  defp extract_string(2, <<length::16, content::binary-size(length), rest::binary>>),
     do: {content, rest}
 
   # COMPACT_STRING: length prefix is an UNSIGNED_VARINT holding (N + 1).
