@@ -70,11 +70,6 @@ defmodule Kafka.Protocol.Serialiser do
 
   # body
 
-  defp extract_software_name(<<length::16, rest::binary>>) do
-    <<client_software_name::binary-size(length), rest::binary>> = rest
-    {client_software_name, rest}
-  end
-
   defp extract_client_id_body(<<length::8, rest::binary>>) do
     <<content::binary-size(length), rest::binary>> = rest
     {content, rest}
