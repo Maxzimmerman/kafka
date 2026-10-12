@@ -44,7 +44,6 @@ defmodule Kafka.Protocol.Serialiser do
     {buffer, rest} = extract_tag_buffer(rest)
     {body_client_id_body, rest} = extract_client_id_body(rest)
     IO.inspect(body_client_id_body, label: "body client id")
-    {client_software_version, rest} = extract_software_name(rest)
 
     IO.inspect(%ApiVersionsRequest{
       size: size,
@@ -55,9 +54,7 @@ defmodule Kafka.Protocol.Serialiser do
         client_id: client_id,
         tag_buffer: buffer
       },
-      body: %ApiVersionsRequest.Body{
-        client_software_name: extract_software_name(rest)
-      }
+      body: %ApiVersionsRequest.Body{}
     })
   end
 
