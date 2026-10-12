@@ -66,30 +66,51 @@ defmodule Kafka.Protocol.Serialiser do
     })
   end
 
-  # header 
+  # header
 
+  # Classic string: INT16 length prefix, then that many bytes.
+  # in:  (2, <<0, 12, "kafka-tester", …>>)
+  # out: {"kafka-tester", <<…>>}   (the string, plus the leftover bytes)
   defp extract_string(2, <<length::16, content::binary-size(length), rest::binary>>),
     do: {content, rest}
 
   # COMPACT_STRING: length prefix is an UNSIGNED_VARINT holding (N + 1).
+  #
+  # in:  <<10, "kafka-cli", 4, "0.1", 0>>
+  # out: {"kafka-cli", <<4, "0.1", 0>>}
   defp extract_compact_string(bytes) do
+    # Peel the varint length off the front:  {10, <<"kafka-cli", 4, "0.1", 0>>}
     {len_plus_one, rest} = decode_unsigned_varint(bytes)
+    # COMPACT_STRING stores N+1, so subtract 1 for the real byte count:  10 - 1 = 9
     length = len_plus_one - 1
+    # Slice `length` bytes off the front:  content = "kafka-cli", rest = <<4, "0.1", 0>>
     <<content::binary-size(length), rest::binary>> = rest
     {content, rest}
   end
 
   # UNSIGNED_VARINT: 7 payload bits per byte, little-endian, high bit = "more bytes".
+  # Walks the bytes in 7-bit steps + the flag bit = 8 bits = 1 byte; when the flag bit is 0 it returns the acc.
+  #
+  # Entry point: start the running total `acc` at 0 and the `shift` (bit height) at 0.
+  # in:  <<10, "kafka-cli", …>>   out: {10, <<"kafka-cli", …>>}
   defp decode_unsigned_varint(bytes), do: decode_unsigned_varint(bytes, 0, 0)
 
+  # acc ||| chunk <<< shift = drop this byte's 7 bits into the right slot of the running total.
+  # matches if flag is 1 (top bit set → another byte follows, so recurse)
+  #
+  # e.g. decoding 300 = <<172, 2>>:  172 = 1_0101100 → chunk 44
+  #   recurse with acc = 0 ||| (44 <<< 0) = 44,  shift = 0 + 7 = 7
   defp decode_unsigned_varint(<<1::1, chunk::7, rest::binary>>, acc, shift) do
     decode_unsigned_varint(rest, acc ||| chunk <<< shift, shift + 7)
   end
 
+  # matches if flag is 0 (top bit clear → last byte, finish and return)
+  #
+  # e.g. A) kafka-cli length: (<<10, "kafka-cli", …>>, 0, 0) → 10 = 0_0001010 → chunk 10
+  #         result = 0 ||| (10 <<< 0) = 10  →  {10, <<"kafka-cli", …>>}
+  #      B) final byte of 300: (<<2>>, 44, 7) → 2 = 0_0000010 → chunk 2
+  #         result = 44 ||| (2 <<< 7) = 44 ||| 256 = 300  →  {300, <<>>}
   defp decode_unsigned_varint(<<0::1, chunk::7, rest::binary>>, acc, shift) do
-    IO.inspect(rest)
-    IO.inspect(acc)
-    IO.inspect(shift)
     {acc ||| chunk <<< shift, rest}
   end
 
