@@ -41,9 +41,15 @@ defmodule Kafka.Protocol.Serialiser do
   defp request_to_struct(
          <<size::32, api_key::16, api_version::16, correlation_id::32, rest::binary>>
        ) do
+    # client_id is a classic NULLABLE_STRING in the header: INT16 length prefix.
     {client_id, rest} = extract_bytes_with_length(2, rest)
-    {client_software_name, rest} = extract_bytes_with_length(1, rest)
-    {client_software_version, rest} = extract_bytes_with_length(1, rest)
+
+    # The (v2/flexible) header ends with a TAG_BUFFER — one 0x00 byte here. Skip it.
+    <<_header_tag_buffer::8, rest::binary>> = rest
+
+    # Body fields are COMPACT_STRINGs: length is an UNSIGNED_VARINT of (N + 1).
+    {client_software_name, rest} = extract_compact_string(rest)
+    {client_software_version, _rest} = extract_compact_string(rest)
 
     IO.inspect(%ApiVersionsRequest{
       size: size,
@@ -67,6 +73,23 @@ defmodule Kafka.Protocol.Serialiser do
 
   defp extract_bytes_with_length(1, <<length::16, content::binary-size(length), rest::binary>>),
     do: {content, rest}
+
+  # COMPACT_STRING: length prefix is an UNSIGNED_VARINT holding (N + 1).
+  defp extract_compact_string(bytes) do
+    {len_plus_one, rest} = decode_unsigned_varint(bytes)
+    length = len_plus_one - 1
+    <<content::binary-size(length), rest::binary>> = rest
+    {content, rest}
+  end
+
+  # UNSIGNED_VARINT: 7 payload bits per byte, little-endian, high bit = "more bytes".
+  defp decode_unsigned_varint(bytes), do: decode_unsigned_varint(bytes, 0, 0)
+
+  defp decode_unsigned_varint(<<1::1, chunk::7, rest::binary>>, acc, shift),
+    do: decode_unsigned_varint(rest, acc ||| chunk <<< shift, shift + 7)
+
+  defp decode_unsigned_varint(<<0::1, chunk::7, rest::binary>>, acc, shift),
+    do: {acc ||| chunk <<< shift, rest}
 
   # body
 
