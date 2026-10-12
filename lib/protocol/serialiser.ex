@@ -41,7 +41,6 @@ defmodule Kafka.Protocol.Serialiser do
          <<size::32, api_key::16, api_version::16, correlation_id::32, rest::binary>>
        ) do
     {client_id, rest} = extract_client_id(2, rest)
-    {buffer, rest} = extract_tag_buffer(rest)
     {body_client_id_body, rest} = extract_client_id(1, rest)
     IO.inspect(body_client_id_body, label: "body client id")
 
