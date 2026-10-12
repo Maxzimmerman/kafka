@@ -53,8 +53,7 @@ defmodule Kafka.Protocol.Serialiser do
         api_key: api_key,
         api_version: api_version,
         correlation_id: correlation_id,
-        client_id: client_id,
-        tag_buffer: nil
+        client_id: client_id
       },
       body: %ApiVersionsRequest.Body{
         client_software_name: client_software_name,
