@@ -42,9 +42,8 @@ defmodule Kafka.Protocol.Serialiser do
        ) do
     IO.inspect(rest)
     {client_id, rest} = extract_bytes_with_length(2, rest)
-    {buffer, rest} = extract_tag_buffer(rest)
-    {body_client_id_body, rest} = extract_bytes_with_length(1, rest)
-    IO.inspect(body_client_id_body, label: "body client id")
+    {client_software_name, rest} = extract_bytes_with_length(2, rest)
+    IO.inspect(client_software_name, label: "body client id")
     {client_software_version, rest} = extract_bytes_with_length(1, rest)
     IO.inspect(client_software_version)
 
