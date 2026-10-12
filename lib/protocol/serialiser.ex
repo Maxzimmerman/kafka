@@ -74,6 +74,12 @@ defmodule Kafka.Protocol.Serialiser do
     {content, rest}
   end
 
+  defp extract_bytes_with_length(length_in_bytes, bytes) do
+    <<length::binary-size(length_in_bytes), rest::binary>> = bytes
+    <<content::binary-size(length), rest::binary>> = rest
+    {content, rest}
+  end
+
   # body
 
   # ------------------------------------ RESPONSE HELPERS ------------------------------------
