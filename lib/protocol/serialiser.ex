@@ -62,10 +62,11 @@ defmodule Kafka.Protocol.Serialiser do
 
   # header 
 
-  defp extract_bytes_with_length(2, <<length::32, content::binary-size(length), rest::binary>>), do: {content, rest}
+  defp extract_bytes_with_length(2, <<length::32, content::binary-size(length), rest::binary>>),
+    do: {content, rest}
 
-  defp extract_bytes_with_length(1, <<length::16, content::binary-size(length), rest::binary>>), do: {content, rest}
- end
+  defp extract_bytes_with_length(1, <<length::16, content::binary-size(length), rest::binary>>),
+    do: {content, rest}
 
   # body
 
