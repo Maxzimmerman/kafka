@@ -42,7 +42,7 @@ defmodule Kafka.Protocol.Serialiser do
        ) do
     {client_id, rest} = extract_client_id(rest)
     {buffer, rest} = extract_tag_buffer(rest)
-    {body_client_id, rest} = extract_client_id(rest)
+    {body_client_id, rest} = extract_client_id_body(rest)
     {client_software_version, rest} = extract_software_name(rest)
 
     IO.inspect(%ApiVersionsRequest{
@@ -74,6 +74,11 @@ defmodule Kafka.Protocol.Serialiser do
   defp extract_software_name(<<length::16, rest::binary>>) do
     <<client_software_name::binary-size(length), rest::binary>> = rest
     {client_software_name, rest}
+  end
+
+  defp extract_client_id_body(<<client_id_length::8, rest::binary>>) do
+    <<client_id_content::binary-size(client_id_length), rest::binary>> = rest
+    {client_id_content, rest}
   end
 
   # ------------------------------------ RESPONSE HELPERS ------------------------------------
