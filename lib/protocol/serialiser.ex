@@ -38,17 +38,23 @@ defmodule Kafka.Protocol.Serialiser do
   # ------------------------------------ REQUEST HELPERS ------------------------------------
 
   defp request_to_struct(
-         <<size::32, api_key::16, api_version::16, correlation_id::32, _rest::binary>>
+         <<size::32, api_key::16, api_version::16, correlation_id::32, rest::binary>>
        ),
        do: %ApiVersionsRequest{
          size: size,
          header: %ApiVersionsRequest.Header{
            api_key: api_key,
            api_version: api_version,
-           correlation_id: correlation_id
+           correlation_id: correlation_id,
+           client_id: extract_client_id(rest)
          },
          body: %ApiVersionsRequest.Body{}
        }
+
+  defp extract_client_id(<<client_id_length::16, _rest::binary>>) do
+    IO.inspect(client_id_length, label: "LENGTH")
+    client_id_length
+  end
 
   # ------------------------------------ RESPONSE HELPERS ------------------------------------
 
