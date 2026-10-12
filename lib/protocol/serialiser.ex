@@ -2,6 +2,7 @@ defmodule Kafka.Protocol.Serialiser do
   @moduledoc """
   Module that handles all transforms and operations and provides structure for a kafka wire protocol request/response shape
   """
+  import Bitwise
 
   alias Kafka.Protocol.ApiVersionsRequest
 
@@ -40,14 +41,9 @@ defmodule Kafka.Protocol.Serialiser do
   defp request_to_struct(
          <<size::32, api_key::16, api_version::16, correlation_id::32, rest::binary>>
        ) do
-    IO.inspect(rest)
     {client_id, rest} = extract_bytes_with_length(2, rest)
-    IO.inspect(rest)
     {client_software_name, rest} = extract_bytes_with_length(1, rest)
     {client_software_version, rest} = extract_bytes_with_length(1, rest)
-    IO.inspect(client_software_name)
-    IO.inspect(client_software_version)
-    IO.inspect(rest)
 
     IO.inspect(%ApiVersionsRequest{
       size: size,
@@ -66,21 +62,10 @@ defmodule Kafka.Protocol.Serialiser do
 
   # header 
 
-  defp extract_bytes_with_length(2, <<length::16, rest::binary>>) do
-    <<content::binary-size(length), rest::binary>> = rest
-    {content, rest}
-  end
+  defp extract_bytes_with_length(2, <<length::32, content::binary-size(length), rest::binary>>), do: {content, rest}
 
-  defp extract_bytes_with_length(1, <<length::8, rest::binary>>) do
-    <<content::binary-size(length), rest::binary>> = rest
-    {content, rest}
-  end
-
-  defp extract_bytes_with_length(length_in_bytes, bytes) do
-    <<length::binary-size(length_in_bytes), rest::binary>> = bytes
-    <<content::binary-size(length), rest::binary>> = rest
-    {content, rest}
-  end
+  defp extract_bytes_with_length(1, <<length::16, content::binary-size(length), rest::binary>>), do: {content, rest}
+ end
 
   # body
 
