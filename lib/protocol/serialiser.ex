@@ -72,12 +72,6 @@ defmodule Kafka.Protocol.Serialiser do
     {content, rest}
   end
 
-  defp extract_bytes_with_length(number_of_bytes, bytes) do
-    <<length::binary-size(number_of_bytes), rest::binary>> = bytes
-    <<content::binary-size(length), rest::binary>> = rest
-    {content, rest}
-  end
-
   defp extract_tag_buffer(<<buffer::8, rest::binary>>), do: {buffer, rest}
 
   # body
