@@ -40,9 +40,9 @@ defmodule Kafka.Protocol.Serialiser do
   defp request_to_struct(
          <<size::32, api_key::16, api_version::16, correlation_id::32, rest::binary>>
        ) do
-    {client_id, rest} = extract_client_id(rest)
+    {client_id, rest} = extract_client_id(2, rest)
     {buffer, rest} = extract_tag_buffer(rest)
-    {body_client_id_body, rest} = extract_client_id_body(rest)
+    {body_client_id_body, rest} = extract_client_id(1, rest)
     IO.inspect(body_client_id_body, label: "body client id")
 
     IO.inspect(%ApiVersionsRequest{
@@ -60,14 +60,13 @@ defmodule Kafka.Protocol.Serialiser do
 
   # header 
 
-  defp extract_client_id(<<client_id_length::16, rest::binary>>) do
+  defp extract_client_id(2, <<client_id_length::16, rest::binary>>) do
     <<client_id_content::binary-size(client_id_length), rest::binary>> = rest
     {client_id_content, rest}
   end
 
-  defp extract_client_id_body(<<client_id_length::8, rest::binary>>) do
-    IO.inspect(client_id_length)
-    <<client_id_content::10, rest::binary>> = rest
+  defp extract_client_id(1, <<client_id_length::8, rest::binary>>) do
+    <<client_id_content::binary-size(client_id_length), rest::binary>> = rest
     {client_id_content, rest}
   end
 
