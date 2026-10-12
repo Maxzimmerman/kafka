@@ -82,8 +82,9 @@ defmodule Kafka.Protocol.Serialiser do
   # UNSIGNED_VARINT: 7 payload bits per byte, little-endian, high bit = "more bytes".
   defp decode_unsigned_varint(bytes), do: decode_unsigned_varint(bytes, 0, 0)
 
-  defp decode_unsigned_varint(<<1::1, chunk::7, rest::binary>>, acc, shift),
-    do: decode_unsigned_varint(rest, acc ||| chunk <<< shift, shift + 7)
+  defp decode_unsigned_varint(<<1::1, chunk::7, rest::binary>>, acc, shift) do
+    decode_unsigned_varint(rest, acc ||| chunk <<< shift, shift + 7)
+  end
 
   defp decode_unsigned_varint(<<0::1, chunk::7, rest::binary>>, acc, shift),
     do: {acc ||| chunk <<< shift, rest}
