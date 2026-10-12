@@ -83,6 +83,9 @@ defmodule Kafka.Protocol.Serialiser do
   defp decode_unsigned_varint(bytes), do: decode_unsigned_varint(bytes, 0, 0)
 
   defp decode_unsigned_varint(<<1::1, chunk::7, rest::binary>>, acc, shift) do
+    IO.inspect(rest)
+    IO.inspect(acc)
+    IO.inspect(shift)
     decode_unsigned_varint(rest, acc ||| chunk <<< shift, shift + 7)
   end
 
