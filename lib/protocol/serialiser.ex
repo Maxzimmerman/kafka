@@ -50,7 +50,7 @@ defmodule Kafka.Protocol.Serialiser do
         api_version: api_version,
         correlation_id: correlation_id,
         client_id: client_id,
-        buffer: buffer
+        tag_buffer: buffer
       },
       body: %ApiVersionsRequest.Body{}
     })
@@ -61,7 +61,7 @@ defmodule Kafka.Protocol.Serialiser do
     {client_id_content, rest}
   end
 
-  defp extract_tag_buffer(<<buffer::16, rest::binary>>), do: {buffer, rest}
+  defp extract_tag_buffer(<<buffer::8, rest::binary>>), do: {buffer, rest}
 
   # ------------------------------------ RESPONSE HELPERS ------------------------------------
 

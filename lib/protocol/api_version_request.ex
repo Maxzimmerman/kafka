@@ -37,8 +37,8 @@ defmodule Kafka.Protocol.ApiVersionsRequest do
       :correlation_id,
       # String (e.g., "kafka-cli")
       :client_id,
-      # 1-byte component for flexible fields
-      tag_buffer: 0x00
+      # 1-byte component for flexible fields 0x00
+      :tag_buffer
     ]
   end
 
