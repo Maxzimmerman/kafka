@@ -42,7 +42,7 @@ defmodule Kafka.Protocol.Serialiser do
          <<size::32, api_key::16, api_version::16, correlation_id::32, rest::binary>>
        ) do
     # client_id is a classic NULLABLE_STRING in the header: INT16 length prefix.
-    {client_id, rest} = extract_bytes_with_length(2, rest)
+    {client_id, rest} = extract_string(2, rest)
 
     # The (v2/flexible) header ends with a TAG_BUFFER — one 0x00 byte here. Skip it.
     <<_header_tag_buffer::8, rest::binary>> = rest
@@ -68,10 +68,7 @@ defmodule Kafka.Protocol.Serialiser do
 
   # header 
 
-  defp extract_bytes_with_length(2, <<length::32, content::binary-size(length), rest::binary>>),
-    do: {content, rest}
-
-  defp extract_bytes_with_length(1, <<length::16, content::binary-size(length), rest::binary>>),
+  defp extract_string(2, <<length::32, content::binary-size(length), rest::binary>>),
     do: {content, rest}
 
   # COMPACT_STRING: length prefix is an UNSIGNED_VARINT holding (N + 1).
