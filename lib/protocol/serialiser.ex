@@ -41,6 +41,7 @@ defmodule Kafka.Protocol.Serialiser do
          <<size::32, api_key::16, api_version::16, correlation_id::32, rest::binary>>
        ) do
     {client_id, rest} = extract_client_id(rest)
+    {buffer, rest} = extract_tag_buffer(rest)
     {body_client_id_body, rest} = extract_client_id_body(rest)
     IO.inspect(body_client_id_body, label: "body client id")
 
@@ -51,7 +52,7 @@ defmodule Kafka.Protocol.Serialiser do
         api_version: api_version,
         correlation_id: correlation_id,
         client_id: client_id,
-        tag_buffer: nil
+        tag_buffer: buffer
       },
       body: %ApiVersionsRequest.Body{}
     })
