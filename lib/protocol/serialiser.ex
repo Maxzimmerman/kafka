@@ -72,8 +72,6 @@ defmodule Kafka.Protocol.Serialiser do
     {content, rest}
   end
 
-  defp extract_tag_buffer(<<buffer::8, rest::binary>>), do: {buffer, rest}
-
   # body
 
   # ------------------------------------ RESPONSE HELPERS ------------------------------------
