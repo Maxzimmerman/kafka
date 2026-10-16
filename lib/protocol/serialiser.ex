@@ -68,6 +68,71 @@ defmodule Kafka.Protocol.Serialiser do
 
   # header
 
+  # =========================================================================================================================
+  # KAFKA COMPACT_STRING BIT-BY-BIT PARSING TRACE
+  # =========================================================================================================================
+  #
+  # Initial Full Payload:
+  # <<10, 107, 97, 102, 107, 97, 45, 99, 108, 105, 4, 48, 46, 49, 0>>
+  # 
+  # Initial Bit Layout:
+  # [Varint 1] [------------------------- "kafka-cli" -------------------------] [Varint 2] [------- "0.1" -------] [Tag Buf]
+  # 0000 1010  0110 1011 0110 0001 0110 0110 0110 1011 0110 0001 0010 1101 0110 0011 0110 1100 0110 1001  0000 0100  0011 0000 0011 0100 0011 0001  0000 0000
+  #
+  # -------------------------------------------------------------------------------------------------------------------------
+  # LINE 1: {client_software_name, rest} = extract_compact_string(rest)
+  # -------------------------------------------------------------------------------------------------------------------------
+  #
+  #   1. Read Varint Byte (Length Prefix):
+  #      Bits: 0000 1010 (Decimal 10)
+  #            ^
+  #            |__ MSB (Most Significant Bit) is 0. This signals the Varint decoding is complete.
+  #
+  #   2. Perform Bitwise Reassembly:
+  #      - Extract 7 payload bits:  000 1010 -> 10
+  #      - Shift and Accumulate:    (10 <<< 0) ||| 0 = 10
+  #      - Target String Length:    10 - 1 = 9 bytes
+  #
+  #   3. Slice next 9 bytes from the bitstream:
+  #      0110 1011 -> 107 -> "k"
+  #      0110 0001 ->  97 -> "a"
+  #      0110 0110 -> 102 -> "f"
+  #      0110 1011 -> 107 -> "k"
+  #      0110 0001 ->  97 -> "a"
+  #      0010 1101 ->  45 -> "-"
+  #      0110 0011 ->  99 -> "c"
+  #      0110 1100 -> 108 -> "l"
+  #      0110 1001 -> 105 -> "i"
+  #
+  #   RESULT 1:
+  #   client_software_name = "kafka-cli"
+  #   rest                 = <<4, 48, 46, 49, 0>>
+  #
+  # -------------------------------------------------------------------------------------------------------------------------
+  # LINE 2: {client_software_version, _rest} = extract_compact_string(rest)
+  # -------------------------------------------------------------------------------------------------------------------------
+  #
+  #   1. Read Next Varint Byte (Length Prefix):
+  #      Bits: 0000 0100 (Decimal 4)
+  #            ^
+  #            |__ MSB is 0. This signals the Varint decoding is complete.
+  #
+  #   2. Perform Bitwise Reassembly:
+  #      - Extract 7 payload bits:  000 0100 -> 4
+  #      - Shift and Accumulate:    (4 <<< 0) ||| 0 = 4
+  #      - Target String Length:    4 - 1 = 3 bytes
+  #
+  #   3. Slice next 3 bytes from the bitstream:
+  #      0011 0000 -> 48 -> "0"
+  #      0011 0100 -> 46 -> "."
+  #      0011 0001 -> 49 -> "1"
+  #
+  #   RESULT 2:
+  #   client_software_version = "0.1"
+  #   _rest                   = <<0>>  (Leftover trailing tag buffer byte)
+  #
+  # =========================================================================================================================
+
   # Classic string: INT16 length prefix, then that many bytes.
   # in:  (2, <<0, 12, "kafka-tester", …>>)
   # out: {"kafka-tester", <<…>>}   (the string, plus the leftover bytes)
