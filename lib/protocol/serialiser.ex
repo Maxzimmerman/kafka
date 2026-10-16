@@ -80,6 +80,7 @@ defmodule Kafka.Protocol.Serialiser do
   # out: {"kafka-cli", <<4, "0.1", 0>>}
   defp extract_compact_string(bytes) do
     IO.inspect(bytes)
+    IO.inspect(bytes, binaries: :as_strings)
     # Peel the varint length off the front:  {10, <<"kafka-cli", 4, "0.1", 0>>}
     {len_plus_one, rest} = decode_unsigned_varint(bytes)
     # COMPACT_STRING stores N+1, so subtract 1 for the real byte count:  10 - 1 = 9
