@@ -195,7 +195,7 @@ defmodule Kafka.Protocol.Serialiser do
 
   defp response_body() do
     with {:ok, error_code} <- error_code() do
-      {:ok, <<error_code>>}
+      {:ok, <<error_code::binary>>}
     end
   end
 
