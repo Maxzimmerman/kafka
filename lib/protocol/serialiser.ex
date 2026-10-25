@@ -187,10 +187,19 @@ defmodule Kafka.Protocol.Serialiser do
         body: %ApiVersionsRequest.Body{}
       }) do
     with {:ok, response_header} <- response_header(correlation_id, api_version),
-         {:ok, response_size} <- response_size(response_header) do
-      {:ok, <<response_size::32, response_header::binary>>}
+         {:ok, response_size} <- response_size(response_header),
+         {:ok, body} <- response_body() do
+      {:ok, <<response_size::32, response_header::binary, body::binary>>}
     end
   end
+
+  defp response_body() do
+    with {:ok, error_code} <- error_code() do
+      {:ok, <<error_code>>}
+    end
+  end
+
+  defp error_code, do: {:ok, <<0::2>>}
 
   defp response_header(correlation_id, api_version) do
     {:ok, <<correlation_id::32, error_code_field(api_version)::16>>}
