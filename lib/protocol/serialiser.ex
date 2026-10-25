@@ -199,7 +199,7 @@ defmodule Kafka.Protocol.Serialiser do
     end
   end
 
-  defp error_code, do: {:ok, <<0::2>>}
+  defp error_code, do: {:ok, <<0::16>>}
 
   defp response_header(correlation_id, api_version) do
     {:ok, <<correlation_id::32, error_code_field(api_version)::16>>}
