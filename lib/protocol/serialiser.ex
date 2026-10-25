@@ -11,17 +11,10 @@ defmodule Kafka.Protocol.Serialiser do
   # ------------------------------------ INTERFACE ------------------------------------
 
   @doc "Receives request as struct converts to response bytes"
-  @spec request_struct_to_response_bytes(ApiVersionsRequest.t() | nil) :: {:ok, binary()} | nil
-  def request_struct_to_response_bytes(%ApiVersionsRequest{
-        header: %ApiVersionsRequest.Header{
-          correlation_id: correlation_id,
-          api_version: api_version
-        },
-        body: %ApiVersionsRequest.Body{}
-      }) do
-    with {:ok, response_header} <- response_header(correlation_id, api_version),
-         {:ok, response_size} <- response_size(response_header) do
-      {:ok, <<response_size::32, response_header::binary>>}
+  @spec response(ApiVersionsRequest.t() | nil) :: {:ok, binary()} | nil
+  def response(%ApiVersionsRequest{} = request) do
+    with {:ok, response_bytes} <- request_struct_to_response_bytes(request) do
+      {:ok, response_bytes}
     end
   end
 
@@ -185,6 +178,19 @@ defmodule Kafka.Protocol.Serialiser do
   # body
 
   # ------------------------------------ RESPONSE HELPERS ------------------------------------
+
+  def request_struct_to_response_bytes(%ApiVersionsRequest{
+        header: %ApiVersionsRequest.Header{
+          correlation_id: correlation_id,
+          api_version: api_version
+        },
+        body: %ApiVersionsRequest.Body{}
+      }) do
+    with {:ok, response_header} <- response_header(correlation_id, api_version),
+         {:ok, response_size} <- response_size(response_header) do
+      {:ok, <<response_size::32, response_header::binary>>}
+    end
+  end
 
   defp response_header(correlation_id, api_version) do
     {:ok, <<correlation_id::32, error_code_field(api_version)::16>>}
